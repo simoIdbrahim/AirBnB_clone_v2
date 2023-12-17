@@ -125,7 +125,7 @@ class HBNBCommand(cmd.Cmd):
         elif class_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        # create Place city_id="0001" user_id="0001" name="My_little_house"
+
         all_list = args.split(" ")
 
         new_instance = eval(class_name)()
@@ -138,7 +138,7 @@ class HBNBCommand(cmd.Cmd):
                 try:
                     value = eval(value)
                 except Exception:
-                    print(f"** couldnt evaluate {value}")
+                    print(f"error  while eval {value}")
                     pass
             if hasattr(new_instance, key):
                 setattr(new_instance, key, value)
