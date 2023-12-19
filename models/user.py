@@ -9,21 +9,23 @@ from models.place import Place
 from models.review import Review
 
 
-class Place(BaseModel, Base):
-    """Place class for storing place information."""
-    __tablename__ = "places"
-    
-    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
-
 class User(BaseModel, Base):
-    """User class for storing user information."""
+    """User class for storing user information.
+
+    Attributes:
+        email (str): Email address of the user.
+        password (str): Password for user login.
+        first_name (str): First name of the user.
+        last_name (str): Last name of the user.
+        places (relationship): One-to-many relationship with Place.
+        reviews (relationship): One-to-many relationship with Review.
+    """
     __tablename__ = "users"
-    
-    id = Column(Integer, primary_key=True)
     email = Column(String(128), nullable=False)
     password = Column(String(128), nullable=False)
     first_name = Column(String(128))
     last_name = Column(String(128))
-    
-    places = relationship("Place", cascade='all, delete, delete-orphan', backref="user")
-    reviews = relationship("Review", cascade='all, delete, delete-orphan', backref="user")
+    places = relationship("Place", cascade='all, delete, delete-orphan',
+                          backref="user")
+    reviews = relationship("Review", cascade='all, delete, delete-orphan',
+                           backref="user")
