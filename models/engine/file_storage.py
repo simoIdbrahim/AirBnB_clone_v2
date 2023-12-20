@@ -1,30 +1,33 @@
 #!/usr/bin/python3
-"""This module defines a class to manage file storage for hbnb clone"""
+"""Ce module définit une classe pour gérer le stockage de fichiers pour le clone hbnb."""
 import json
 from models.base_model import BaseModel
-from models.user import User
-from models.place import Place
-from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from models.place import Place
+from models.user import User
+from models.state import State
+
 
 
 class FileStorage:
-    """This class manages storage of hbnb models in JSON format"""
-    __file_path = 'file.json'
+    """Cette classe gère le stockage des modèles hbnb au format JSON."""
+
     __objects = {}
+    __file_path = 'file.json'
 
     def all(self, cls=None):
-        """Returns a dictionary of models currently in storage.
+        """Retourne un dictionnaire des modèles actuellement en stockage.
 
         Args:
-            cls (class, optional): If specified, filters the result to include
-                only objects of the specified class.
+            cls (classe, optionnel): Si spécifié, filtre le résultat pour inclure
+                uniquement les objets de la classe spécifiée.
 
         Returns:
-            dict: A dictionary containing objects in storage.
+            dict: Un dictionnaire contenant les objets en stockage.
         """
+
         if cls:
             if isinstance(cls, str):
                 cls = globals().get(cls)
@@ -35,31 +38,36 @@ class FileStorage:
         return FileStorage.__objects
 
     def new(self, obj):
-        """Adds new object to storage dictionary"""
-        self.all().update({obj.to_dict()['__class__'] + '.' + obj.id: obj})
+        """Ajoute un nouvel objet au dictionnaire de stockage."""
+
+        key = f"{obj.to_dict()['__class__']}.{obj.id}"
+        self.all().update({key: obj})
 
     def save(self):
-        """Saves storage dictionary to file"""
+        """Enregistre le dictionnaire de stockage dans un fichier."""
+
         with open(FileStorage.__file_path, 'w') as f:
-            temp = {}
-            temp.update(FileStorage.__objects)
-            for key, val in temp.items():
-                temp[key] = val.to_dict()
-            json.dump(temp, f)
+            instantane = {}
+            instantane.update(FileStorage.__objects)
+            for keyword, value in instantane.items():
+                instantane[keyword] = value.to_dict()
+            json.dump(instantane, f)
 
     def reload(self):
-        """Loads storage dictionary from file."""
-        classes = {
+        """Charge le dictionnaire de stockage à partir du fichier."""
+
+        avilables = {
                     'BaseModel': BaseModel, 'User': User, 'Place': Place,
                     'State': State, 'City': City, 'Amenity': Amenity,
                     'Review': Review
                   }
+
         try:
-            temp = {}
+            instantane = {}
             with open(FileStorage.__file_path, 'r') as f:
-                temp = json.load(f)
-                for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                instantane = json.load(f)
+                for keyword, value in instantane.items():
+                        self.all()[keyword] = avilables[value['__class__']](**value)
         except FileNotFoundError:
             pass
         except json.decoder.JSONDecodeError:
@@ -67,16 +75,18 @@ class FileStorage:
 
     def delete(self, obj=None):
         """
-         Delete obj from __objects if it’s inside - if obj is equal to None,
-           the method should not do anything
+        Supprime obj de __objects s'il est présent - si obj est égal à None,
+        la méthode ne doit rien faire.
         """
+
         if obj is None:
             return
         obj_to_del = f"{obj.__class__.__name__}.{obj.id}"
 
         try:
             del FileStorage.__objects[obj_to_del]
-        except AttributeError:
-            pass
         except KeyboardInterrupt:
             pass
+        except AttributeError:
+            pass
+        
